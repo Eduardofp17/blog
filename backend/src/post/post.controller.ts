@@ -8,6 +8,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { PostService } from './post.service';
 import { UseGuards } from '@nestjs/common';
@@ -20,9 +21,11 @@ import {
   ApiBody,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { PaginationDto } from './dto/pagination-dto';
 
 @ApiTags('Posts')
 @Controller('posts')
@@ -81,37 +84,71 @@ export class PostController {
     return this.postService.createNewPost(authorId, dto);
   }
 
-  // GET /posts/feed - It must show to the user all posts
-  @ApiOperation({ summary: 'Retrieve all posts for the feed' })
+  // GET /posts/feed - It must show to the paginated posts
+  @ApiOperation({
+    summary: 'Get feed posts',
+    description: `
+    Fetches a paginated feed of posts.
+    
+    **Example usage:**
+    \`\`\`bash
+    curl -X GET "http://localhost:3000/posts/feed?page=1&limit=5" -H "accept: application/json"
+    \`\`\`
+    `,
+  })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    example: 1,
+    description: 'Page number',
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    example: 5,
+    description: 'Number of items per page',
+  })
   @HttpCode(HttpStatus.OK)
   @Get('/feed')
   @ApiResponse({
     status: 200,
     description: 'Successfully retrieved all posts.',
     schema: {
-      type: 'array',
-      items: {
-        type: 'object',
-        properties: {
-          _id: { type: 'string', example: 'post_id' },
-          title: { type: 'string', example: 'post title' },
-          content: { type: 'string', example: 'post content' },
-          author: { type: 'string', example: "author's id" },
-          likes: { type: 'number', example: '0' },
-          impressions: { type: 'number', example: '4' },
-          createdAt: {
-            type: 'string',
-            format: 'date-time',
-            example: '2024-12-17T18:35:10.749Z',
+      type: 'object',
+      properties: {
+        data: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              _id: { type: 'string', example: 'post_id' },
+              title: { type: 'string', example: 'post title' },
+              content: { type: 'string', example: 'post content' },
+              author: { type: 'string', example: "author's id" },
+              likes: { type: 'number', example: 0 },
+              impressions: { type: 'number', example: 4 },
+              createdAt: {
+                type: 'string',
+                format: 'date-time',
+                example: '2024-12-17T18:35:10.749Z',
+              },
+              updatedAt: {
+                type: 'string',
+                format: 'date-time',
+                example: '2024-12-17T18:35:10.749Z',
+              },
+              __v: { type: 'number', example: 0 },
+              likedBy: {
+                type: 'array',
+                items: { type: 'string' },
+                example: [],
+              },
+            },
           },
-          updatedAt: {
-            type: 'string',
-            format: 'date-time',
-            example: '2024-12-17T18:35:10.749Z',
-          },
-          __v: { type: 'number', example: '0' },
-          likedBy: { type: 'array', items: { type: 'string' }, example: [] },
         },
+        total: { type: 'number', example: 1 },
+        totalPages: { type: 'number', example: 1 },
+        currentPage: { type: 'string', example: '1' },
       },
     },
   })
@@ -124,8 +161,8 @@ export class PostController {
       statusCode: 404,
     },
   })
-  getAllPosts() {
-    return this.postService.getAllPosts();
+  getAllPosts(@Query() paginationDto: PaginationDto) {
+    return this.postService.getAllPosts(paginationDto);
   }
 
   // GET /posts/:id - It must show a single post by the Unique Identifier

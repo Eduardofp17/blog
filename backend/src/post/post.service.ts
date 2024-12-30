@@ -8,6 +8,7 @@ import { Model, Types } from 'mongoose';
 import { Post } from '../schemas/post.schema';
 import { CreatePostDto } from './dto';
 import { UpdatePostDto } from './dto/update-post.dto';
+import { PaginationDto } from './dto/pagination-dto';
 
 @Injectable()
 export class PostService {
@@ -19,14 +20,25 @@ export class PostService {
     return this.postModel.create({ ...dto, author: authorId });
   }
 
-  async getAllPosts() {
-    const posts = await this.postModel.find();
-    if (!posts) throw new NotFoundException('No posts found.');
+  async getAllPosts(paginationDto: PaginationDto) {
+    if (!paginationDto) throw new NotFoundException('No posts found.');
+    const { page, limit } = paginationDto;
+    const skip = (page - 1) * limit;
+    const [data, total] = await Promise.all([
+      this.postModel.find().skip(skip).limit(limit).exec(),
+      this.postModel.countDocuments().exec(),
+    ]);
     await this.postModel.updateMany(
-      { _id: { $in: posts.map((post) => post._id) } },
+      { _id: { $in: data.map((post) => post._id) } },
       { $inc: { impressions: 1 } },
     );
-    return posts;
+    const totalPages = Math.ceil(total / limit);
+    return {
+      data,
+      total,
+      totalPages,
+      currentPage: page,
+    };
   }
 
   async getPostById(id: string) {
