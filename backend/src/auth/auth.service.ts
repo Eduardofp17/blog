@@ -23,8 +23,14 @@ export class AuthService {
 
   async signup(dto: CreateUserDto): Promise<UserCreated> {
     const { email, name, lastname, password, username } = dto;
-    const user = await this.userModel.findOne({ email });
-    if (user) throw new ConflictException('Email is already in use.');
+    const userEmail = await this.userModel.findOne({ email });
+    if (userEmail) throw new ConflictException('Email is already in use.');
+
+    const userUsername = await this.userModel.findOne({
+      username: { $regex: new RegExp(`^${username}$`, 'i') },
+    });
+    if (userUsername)
+      throw new ConflictException('Username is already in use.');
 
     const newUser = new this.userModel({
       email,
@@ -50,16 +56,11 @@ export class AuthService {
   }
 
   async signin(dto: LoginUserDto) {
-    const { emailOrUsername, password } = dto;
-    if (!emailOrUsername || !password) {
-      throw new BadRequestException(
-        'Email/username and password are required.',
-      );
+    const { email, password } = dto;
+    if (!email) {
+      throw new BadRequestException('Email password are required.');
     }
-    const isEmail = emailOrUsername.includes('@');
-    const user = await this.userModel.findOne(
-      isEmail ? { email: emailOrUsername } : { username: emailOrUsername },
-    );
+    const user = await this.userModel.findOne({ email: email });
     if (!user) throw new ForbiddenException('Incorrect credentials.');
     const pwMatches = await argon2.verify(user.password, password);
     if (!pwMatches) throw new ForbiddenException('Incorrect credentials.');

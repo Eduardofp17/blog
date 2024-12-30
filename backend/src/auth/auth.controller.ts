@@ -29,13 +29,23 @@ export class AuthController {
   })
   @ApiResponse({
     status: 409,
-    description: 'Email is already in use.',
-    schema: {
-      type: 'object',
-      properties: {
-        message: { type: 'string', example: 'Email is already in use.' },
-        error: { type: 'string', example: 'Conflict' },
-        statusCode: { type: 'number', example: 409 },
+    description: 'Email or username is already in use.',
+    examples: {
+      emailIsAlreadyInUse: {
+        summary: 'Email is already in use.',
+        value: {
+          message: 'Email is already in use.',
+          error: 'Conflict',
+          statusCode: 409,
+        },
+      },
+      usernameIsAlreadyInUse: {
+        summary: 'Username is already in use.',
+        value: {
+          message: 'Username is already in use.',
+          error: 'Conflict',
+          statusCode: 409,
+        },
       },
     },
   })
@@ -71,13 +81,13 @@ export class AuthController {
   })
   @ApiResponse({
     status: 403,
-    description: 'Email/username and password are required.',
+    description: 'Email and password are required.',
     schema: {
       type: 'object',
       properties: {
         message: {
           type: 'string',
-          example: 'Email/username and password are required.',
+          example: 'Email and password are required.',
         },
         error: { type: 'string', example: 'Forbidden' },
         statusCode: { type: 'number', example: 403 },
