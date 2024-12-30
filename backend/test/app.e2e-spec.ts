@@ -330,31 +330,18 @@ describe('AppController (e2e)', () => {
             email: dto.email,
             password: dto.password,
           })
-          .expectStatus(201)
-          .stores('userId', '_id');
+          .expectStatus(201);
       });
     });
     describe('User Signin', () => {
-      it('should throw if username does not exist', () => {
-        return pactum
-          .spec()
-          .post('/auth/signin')
-          .withBody({ emailOrUsername: 'hithere', password: dto.password })
-          .expectStatus(403)
-          .expectJsonLike({
-            message: 'Incorrect credentials.',
-            error: 'Forbidden',
-            statusCode: 403,
-          });
-      });
-      it('should throw if emailOrUsername is empty', () => {
+      it('should throw if email is empty', () => {
         return pactum
           .spec()
           .post('/auth/signin')
           .withBody({ password: dto.password })
           .expectStatus(400)
           .expectJsonLike({
-            message: 'Email/username and password are required.',
+            message: ['email must be an email', 'email should not be empty'],
             error: 'Bad Request',
             statusCode: 400,
           });
@@ -363,7 +350,7 @@ describe('AppController (e2e)', () => {
         return pactum
           .spec()
           .post('/auth/signin')
-          .withBody({ emailOrUsername: 'test@gmail.com' })
+          .withBody({ email: 'test@gmail.com' })
           .expectStatus(400)
           .expectJsonLike({
             message: [
@@ -374,13 +361,13 @@ describe('AppController (e2e)', () => {
             statusCode: 400,
           });
       });
-      it('Should throw if name has not the minimum value', () => {
+      it('Should throw if password has not the minimum value', () => {
         return pactum
           .spec()
           .post('/auth/signin')
           .withBody({
             password: 'oadfa',
-            emailOrUsername: dto.email,
+            email: dto.email,
           })
           .expectJsonLike({
             message: ['Password must be between 6 and 20 characters'],
@@ -396,7 +383,7 @@ describe('AppController (e2e)', () => {
           .spec()
           .post('/auth/signin')
           .withBody({
-            emailOrUsername: dto.email,
+            email: dto.email,
             password,
           })
           .expectJsonLike({
@@ -414,7 +401,7 @@ describe('AppController (e2e)', () => {
           .spec()
           .post('/auth/signin')
           .withBody({
-            emailOrUsername: 'teste23@gmail.com',
+            email: 'testeaafdaafa23@gmail.com',
             password: dto.password,
           })
           .expectStatus(403)
@@ -428,7 +415,7 @@ describe('AppController (e2e)', () => {
         return pactum
           .spec()
           .post('/auth/signin')
-          .withBody({ emailOrUsername: dto.email, password: '123456adfa' })
+          .withBody({ email: dto.email, password: '123456adfa' })
           .expectStatus(403)
           .expectJsonLike({
             message: 'Incorrect credentials.',
@@ -440,10 +427,55 @@ describe('AppController (e2e)', () => {
         return pactum
           .spec()
           .post('/auth/signin')
-          .withBody({ emailOrUsername: dto.email, password: dto.password })
+          .withBody({ email: dto.email, password: dto.password })
           .expectStatus(200)
           .stores('userAt', 'access_token');
       });
+    });
+  });
+  describe('Signup', () => {
+    const dto: CreateUserDto = {
+      email: 'teste@gmail.com',
+      username: 'Eduardofp1777',
+      name: 'Eduardo',
+      lastname: 'Pinheiro',
+      password: 'abc123',
+    };
+    it('Should throw if email is already in use.', () => {
+      return pactum
+        .spec()
+        .post('/auth/signup')
+        .withBody({
+          name: dto.name,
+          username: 'eUDHABAOAFA',
+          lastname: dto.lastname,
+          email: dto.email,
+          password: dto.password,
+        })
+        .expectStatus(409)
+        .expectJsonLike({
+          message: 'Email is already in use.',
+          error: 'Conflict',
+          statusCode: 409,
+        });
+    });
+    it('Should throw if username is already in use.', () => {
+      return pactum
+        .spec()
+        .post('/auth/signup')
+        .withBody({
+          name: dto.name,
+          username: dto.username,
+          lastname: dto.lastname,
+          email: 'huhauahuahauh@gmail.com',
+          password: dto.password,
+        })
+        .expectStatus(409)
+        .expectJsonLike({
+          message: 'Username is already in use.',
+          error: 'Conflict',
+          statusCode: 409,
+        });
     });
   });
   describe('Create super user to tests', () => {
@@ -484,9 +516,14 @@ describe('AppController (e2e)', () => {
       return pactum
         .spec()
         .withHeaders({ Authorization: 'Bearer $S{userAt}' })
-        .get('/posts/feed/')
+        .get('/posts/feed?page=1&limit=5')
         .expectStatus(200)
-        .expectJsonLike([]);
+        .expectJsonLike({
+          data: [],
+          total: 0,
+          totalPages: 0,
+          currentPage: 1,
+        });
     });
     describe('Create post', () => {
       const dto: CreatePostDto = {
@@ -499,7 +536,7 @@ describe('AppController (e2e)', () => {
           .spec()
           .post('/auth/signin')
           .withBody({
-            emailOrUsername: 'Eduardofp',
+            email: 'secmmvi@gmail.com',
             password: 'abc123',
           })
           .expectStatus(200)
@@ -577,7 +614,10 @@ describe('AppController (e2e)', () => {
     });
     describe('Get feed', () => {
       it('Should get feed', () => {
-        return pactum.spec().get('/posts/feed/').expectStatus(200);
+        return pactum
+          .spec()
+          .get('/posts/feed?page=1&limit=5')
+          .expectStatus(200);
       });
     });
     describe('Get post by id', () => {
