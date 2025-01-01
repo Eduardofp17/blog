@@ -527,8 +527,8 @@ describe('AppController (e2e)', () => {
     });
     describe('Create post', () => {
       const dto: CreatePostDto = {
-        title: 'Why is Eduardo so rich?',
-        content: 'Cause he deserve it sooo much',
+        contentPt: '# Porque ele merece muito',
+        contentEn: '# Cause he deserve it so much',
       };
 
       it('should signin with Eduardofp', () => {
