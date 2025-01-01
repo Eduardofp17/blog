@@ -6,9 +6,7 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Post } from '../schemas/post.schema';
-import { CreatePostDto } from './dto';
-import { UpdatePostDto } from './dto/update-post.dto';
-import { PaginationDto } from './dto/pagination-dto';
+import { CreatePostDto, UpdatePostDto, PaginationDto } from './dto';
 
 @Injectable()
 export class PostService {

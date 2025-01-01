@@ -13,9 +13,8 @@ import {
 import { PostService } from './post.service';
 import { UseGuards } from '@nestjs/common';
 import { JwtGuard, UsernameGuard } from '../guards';
-import { CreatePostDto } from './dto';
+import { CreatePostDto, UpdatePostDto, PaginationDto } from './dto';
 import { GetUser } from '../auth/decorator';
-import { UpdatePostDto } from './dto/update-post.dto';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -25,7 +24,6 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { PaginationDto } from './dto/pagination-dto';
 
 @ApiTags('Posts')
 @Controller('posts')

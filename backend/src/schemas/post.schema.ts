@@ -4,10 +4,10 @@ import { Document, Types } from 'mongoose';
 @Schema()
 export class Post extends Document {
   @Prop({ required: true })
-  title: string;
+  contentPt: string;
 
   @Prop({ required: true })
-  content: string;
+  contentEn: string;
 
   @Prop({ type: Types.ObjectId, ref: 'users', required: true })
   author: Types.ObjectId;

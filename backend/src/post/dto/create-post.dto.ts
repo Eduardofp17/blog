@@ -3,18 +3,18 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class CreatePostDto {
   @ApiProperty({
-    description: 'The title of the post',
-    example: 'This is a post.',
+    description: 'The content in portuguese writed in markdown',
+    example: '# Estou muito feliz por escrever meu primeiro post.',
   })
   @IsNotEmpty()
   @IsString()
-  title: string;
+  contentPt: string;
 
   @ApiProperty({
-    description: 'The content of the post',
-    example: 'I am so happy for write my first post.',
+    description: 'The content in english writed in markdown',
+    example: '# I am so happy for write my first post.',
   })
   @IsNotEmpty()
   @IsString()
-  content: string;
+  contentEn: string;
 }
