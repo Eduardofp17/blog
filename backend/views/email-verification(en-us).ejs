@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Redefinição de Senha</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+      body {
+        font-family: 'Inter', sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f3f4f6;
+      }
+      .container {
+        max-width: 600px;
+        margin: 20px auto;
+        background: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+      .header {
+        background-color: #1E293B;
+        padding: 20px;
+        text-align: center;
+        color: #ffffff;
+        font-size: 24px;
+        font-weight: 600;
+      }
+      .content {
+        padding: 20px;
+        font-size: 16px;
+        color: #374151;
+        line-height: 1.6;
+      }
+      .button {
+        display: block;
+        width: 100%;
+        max-width: 200px;
+        margin: 20px auto;
+        text-align: center;
+        background: #1E293B;
+        color: #ffffff;
+        padding: 12px;
+        border-radius: 8px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: background-color 0.3s;
+      }
+      .button:hover {
+        background-color: #475569;
+        color: #fff;
+      }
+      .footer {
+        text-align: center;
+        padding: 10px;
+        font-size: 14px;
+        color: #6b7280;
+        background: #f9fafb;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        Redefinição de Senha
+      </div>
+
+      <div class="content">
+        <p>Olá, <strong><%= name %></strong></p>
+        <p>
+          Recebemos uma solicitação para redefinir a senha da sua conta. Caso não
+          tenha feito essa solicitação, ignore este e-mail.
+        </p>
+        <p>Se você deseja redefinir sua senha, clique no botão abaixo:</p>
+
+        <a href="<%= resetLink %>" class="button" style="color:#fff">Redefinir Senha</a>
+
+        <p>
+          Se o botão acima não funcionar, copie e cole o link abaixo no seu
+          navegador:
+        </p>
+        <p><a href="<%= resetLink %>"><%= resetLink %></a></p>
+        <p>Atenciosamente, <br />Eduardofp</p>
+      </div>
+
+      <div class="footer">
+        © <%= year %> Eduardofp Blog. Todos os direitos reservados.
+      </div>
+    </div>
+  </body>
+</html>
