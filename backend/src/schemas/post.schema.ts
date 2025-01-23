@@ -14,6 +14,8 @@ export class Post extends Document {
 
   @Prop({ required: true, default: 0 })
   likes: number;
+  @Prop({ required: true, default: 0 })
+  comments: number;
 
   @Prop({ required: true, default: 0 })
   impressions: number;
