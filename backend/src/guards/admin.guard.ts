@@ -6,12 +6,12 @@ import {
 } from '@nestjs/common';
 
 @Injectable()
-export class UsernameGuard implements CanActivate {
+export class AdminGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest();
     const user = request.user;
-    if (!user || user.username !== 'Eduardofp') {
-      throw new UnauthorizedException();
+    if (!user || user.role !== 'admin') {
+      throw new UnauthorizedException('Only admins can access this route');
     }
 
     return true;

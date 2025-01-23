@@ -1,2 +1,2 @@
 export * from './jwt.guard';
-export * from './username.guard';
+export * from './admin.guard';
