@@ -5,6 +5,8 @@ import { Document } from 'mongoose';
 
 @Schema()
 export class User extends Document {
+  @Prop()
+  profilePic: string;
   @Prop({ required: true, unique: true })
   username: string;
 
