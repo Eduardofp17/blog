@@ -76,13 +76,26 @@ export class InteractionsService {
     return comments;
   }
 
+  async getCommentById(postId: string, commentId: string) {
+    if (!Types.ObjectId.isValid(commentId) || !Types.ObjectId.isValid(postId))
+      throw new ForbiddenException('Invalid ID');
+
+    const post = await this.postModel.findById(postId);
+    if (!post) throw new NotFoundException('Post not found.');
+
+    const comment = await this.commentModel.findById(commentId);
+    if (!comment) throw new NotFoundException('Comment not found.');
+
+    return comment;
+  }
+
   async addComment(userId: string, postId: string, dto: CreateCommentDto) {
     if (!Types.ObjectId.isValid(userId) || !Types.ObjectId.isValid(postId))
       throw new ForbiddenException('Invalid ID');
 
     const post = await this.postModel.findById(postId);
     if (!post) throw new NotFoundException('Post not found.');
-
+    await this.postModel.updateOne({ _id: postId }, { $inc: { comments: 1 } });
     const comment = await this.commentModel.create({
       ...dto,
       postId,
@@ -137,7 +150,13 @@ export class InteractionsService {
     if (!comment) throw new NotFoundException('Comment not found.');
 
     if (comment.author.toString() !== userId) throw new ForbiddenException();
+    await this.postModel.updateOne(
+      { _id: postId },
+      { $addToSet: { $inc: { comments: -1 } } },
+    );
     const commentDeleted = await this.commentModel.findByIdAndDelete(commentId);
+    await this.postModel.updateOne({ _id: postId }, { $inc: { comments: -1 } });
+    await this.repliesModel.deleteMany({ commentId });
     return commentDeleted;
   }
 
@@ -209,6 +228,25 @@ export class InteractionsService {
       { $new: true },
     );
     return replies;
+  }
+
+  async getReplyById(postId: string, commentId: string, replyId: string) {
+    if (
+      !Types.ObjectId.isValid(commentId) ||
+      !Types.ObjectId.isValid(postId) ||
+      !Types.ObjectId.isValid(replyId)
+    )
+      throw new ForbiddenException('Invalid ID');
+
+    const post = await this.postModel.findById(postId);
+    if (!post) throw new NotFoundException('Post not found.');
+
+    const comment = await this.commentModel.findById(commentId);
+    if (!comment) throw new NotFoundException('Comment not found.');
+    const reply = await this.repliesModel.findById(replyId);
+    if (!reply) throw new NotFoundException('Reply not found.');
+
+    return reply;
   }
 
   async likeAComment(userId: string, postId: string, commentId: string) {
@@ -393,7 +431,6 @@ export class InteractionsService {
 
     const comment = await this.commentModel.findById(commentId);
     if (!comment) throw new NotFoundException('Comment not found.');
-    if (comment.author.toString() !== userId) throw new ForbiddenException();
     const alreadyLikedIt = await this.commentModel.findOne({
       _id: commentId,
       likedBy: userId,
@@ -402,7 +439,7 @@ export class InteractionsService {
     if (!alreadyLikedIt)
       throw new ForbiddenException("You haven't liked this comment.");
 
-    await this.repliesModel.updateOne(
+    await this.commentModel.updateOne(
       { _id: commentId },
       { $pull: { likedBy: userId }, $inc: { likes: -1 } },
     );
@@ -425,7 +462,7 @@ export class InteractionsService {
 
     const comment = await this.commentModel.findById(commentId);
     if (!comment) throw new NotFoundException('Comment not found.');
-    if (comment.author.toString() !== userId) throw new ForbiddenException();
+
     const alreadyDislikedIt = await this.commentModel.findOne({
       _id: commentId,
       dislikedBy: userId,
@@ -434,7 +471,7 @@ export class InteractionsService {
     if (!alreadyDislikedIt)
       throw new ForbiddenException("You haven't disliked this comment");
 
-    await this.repliesModel.updateOne(
+    await this.commentModel.updateOne(
       { _id: commentId },
       { $pull: { dislikedBy: userId }, $inc: { dislikes: -1 } },
     );
@@ -463,7 +500,6 @@ export class InteractionsService {
     const reply = await this.repliesModel.findById(replyId);
     if (!reply) throw new NotFoundException('Reply not found.');
 
-    if (reply.author.toString() !== userId) throw new ForbiddenException();
     const alreadyLikedIt = await this.repliesModel.findOne({
       _id: replyId,
       likedBy: userId,
@@ -501,7 +537,6 @@ export class InteractionsService {
     const reply = await this.repliesModel.findById(replyId);
     if (!reply) throw new NotFoundException('Reply not found.');
 
-    if (reply.author.toString() !== userId) throw new ForbiddenException();
     const alreadyDislikedIt = await this.repliesModel.findOne({
       _id: replyId,
       dislikedBy: userId,

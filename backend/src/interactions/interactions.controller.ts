@@ -155,6 +155,101 @@ export class InteractionsController {
     return this.interactionsService.getComments(postId);
   }
 
+  @Get('/:postId/comments/:commentId')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Get comment by ID' })
+  @ApiParam({
+    name: 'postId',
+    description: 'The ID of the post that comment belongs to',
+  })
+  @ApiParam({
+    name: 'commentId',
+    description: 'The ID of the comment to get',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Comment successfully get',
+    schema: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          _id: { type: 'string', example: 'reply_id' },
+          content: { type: 'string', example: 'this is a reply' },
+          author: { type: 'string', example: 'author_id' },
+          postId: { type: 'string', example: 'post_id' },
+          likes: { type: 'number', example: '0' },
+          dislikes: { type: 'number', example: '0' },
+          impression: { type: 'number', example: '0' },
+          createdAt: {
+            type: 'string',
+            format: 'date-format',
+            example: '2024-12-17T18:38:16.840Z',
+          },
+          updatedAt: {
+            type: 'string',
+            format: 'date-format',
+            example: '2024-12-17T18:38:16.840Z',
+          },
+          likedBy: {
+            type: 'array',
+            items: {
+              example: 'id of the user that liked the reply (user_id)',
+            },
+          },
+          dislikedBy: {
+            type: 'array',
+            items: {
+              example: 'id of the user that disliked the reply (user_id)',
+            },
+          },
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Could happens when a user sent a bad ID.',
+    example: {
+      invalidId: {
+        summary: 'Invalid ID.',
+        value: {
+          message: 'Invalid ID.',
+          error: 'Forbidden',
+          statusCode: 403,
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Resource not found. Could be a post or a comment.',
+    examples: {
+      postNotFound: {
+        summary: 'Post not found',
+        value: {
+          message: 'Post not found.',
+          error: 'Not Found',
+          statusCode: 404,
+        },
+      },
+      commentNotFound: {
+        summary: 'Comment not found',
+        value: {
+          message: 'Comment not found.',
+          error: 'Not Found',
+          statusCode: 404,
+        },
+      },
+    },
+  })
+  getCommentById(
+    @Param('commentId') commentId: string,
+    @Param('postId') postId: string,
+  ) {
+    return this.interactionsService.getCommentById(postId, commentId);
+  }
+
   @Post('/:postId/comments')
   @UseGuards(JwtGuard)
   @HttpCode(HttpStatus.CREATED)
@@ -824,6 +919,118 @@ export class InteractionsController {
     @Param('postId') postId: string,
   ) {
     return this.interactionsService.getReplies(postId, commentId);
+  }
+
+  @Get('/:postId/comments/:commentId/replies/:replyId')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Get reply by ID' })
+  @ApiParam({
+    name: 'postId',
+    description: 'The ID of the post that comment belongs to',
+  })
+  @ApiParam({
+    name: 'commentId',
+    description: 'The ID of the comment that reply belongs to',
+  })
+  @ApiParam({
+    name: 'replyId',
+    description: 'The ID of the reply to get',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Reply successfully get',
+    schema: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          _id: { type: 'string', example: 'reply_id' },
+          content: { type: 'string', example: 'this is a reply' },
+          author: { type: 'string', example: 'author_id' },
+          commentId: { type: 'string', example: 'comment_id' },
+          mention: {
+            type: 'string',
+            example: 'id of the author of the comment or reply',
+          },
+          likes: { type: 'number', example: '0' },
+          dislikes: { type: 'number', example: '0' },
+          impression: { type: 'number', example: '0' },
+          createdAt: {
+            type: 'string',
+            format: 'date-format',
+            example: '2024-12-17T18:38:16.840Z',
+          },
+          updatedAt: {
+            type: 'string',
+            format: 'date-format',
+            example: '2024-12-17T18:38:16.840Z',
+          },
+          likedBy: {
+            type: 'array',
+            items: {
+              example: 'id of the user that liked the reply (user_id)',
+            },
+          },
+          dislikedBy: {
+            type: 'array',
+            items: {
+              example: 'id of the user that disliked the reply (user_id)',
+            },
+          },
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Could happens when a user sent a bad ID.',
+    example: {
+      invalidId: {
+        summary: 'Invalid ID.',
+        value: {
+          message: 'Invalid ID.',
+          error: 'Forbidden',
+          statusCode: 403,
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Resource not found. Could be a post, a comment or a reply.',
+    examples: {
+      postNotFound: {
+        summary: 'Post not found',
+        value: {
+          message: 'Post not found.',
+          error: 'Not Found',
+          statusCode: 404,
+        },
+      },
+      commentNotFound: {
+        summary: 'Comment not found',
+        value: {
+          message: 'Comment not found.',
+          error: 'Not Found',
+          statusCode: 404,
+        },
+      },
+      replyNotFound: {
+        summary: 'Reply was not found',
+        value: {
+          message: 'Reply not found.',
+          error: 'Not Found',
+          statusCode: 404,
+        },
+      },
+    },
+  })
+  getReplyById(
+    @Param('commentId') commentId: string,
+    @Param('postId') postId: string,
+    @Param('replyId') replyId: string,
+  ) {
+    return this.interactionsService.getReplyById(postId, commentId, replyId);
   }
 
   @Post('/:postId/comments/:commentId/replies')

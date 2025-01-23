@@ -5,7 +5,7 @@ import { ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly AuthService: AuthService) {}
+  constructor(private readonly authService: AuthService) {}
 
   @Post('signup')
   @HttpCode(HttpStatus.CREATED)
@@ -50,7 +50,7 @@ export class AuthController {
     },
   })
   signup(@Body() dto: CreateUserDto) {
-    return this.AuthService.signup(dto);
+    return this.authService.signup(dto);
   }
 
   @Post('signin')
@@ -95,6 +95,6 @@ export class AuthController {
     },
   })
   signin(@Body() dto: LoginUserDto) {
-    return this.AuthService.signin(dto);
+    return this.authService.signin(dto);
   }
 }

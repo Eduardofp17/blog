@@ -44,11 +44,7 @@ export class PostService {
       throw new ForbiddenException('Invalid id.');
     const post = await this.postModel.findById(id);
     if (!post) throw new NotFoundException();
-    await this.postModel.findByIdAndUpdate(
-      id,
-      { $inc: { impressions: 1 } },
-      { $new: true },
-    );
+
     return post;
   }
 
