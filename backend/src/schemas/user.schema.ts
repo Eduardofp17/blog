@@ -19,6 +19,12 @@ export class User extends Document {
   @Prop({ required: true })
   lastname: string;
 
+  @Prop({ required: true, default: false })
+  email_verified: boolean;
+
+  @Prop({ required: true, default: 'user' })
+  role: string;
+
   @Prop({ required: true })
   password: string;
 
