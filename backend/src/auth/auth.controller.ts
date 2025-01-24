@@ -1,7 +1,16 @@
-import { Controller, Post, Body, HttpStatus, HttpCode } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  HttpStatus,
+  HttpCode,
+  Param,
+  Query,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto, LoginUserDto } from './dto';
 import { ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
+import { Throttle } from '@nestjs/throttler';
 
 @Controller('auth')
 export class AuthController {
@@ -96,5 +105,25 @@ export class AuthController {
   })
   signin(@Body() dto: LoginUserDto) {
     return this.authService.signin(dto);
+  }
+
+  @Post('signup/send-verification-code/:email')
+  @HttpCode(HttpStatus.OK)
+  sendVerificationCode(
+    @Param('email') email: string,
+    @Query('lang') lang: 'pt-br' | 'en-us',
+  ) {
+    return this.authService.sendVerificationCode(email, lang);
+  }
+
+  @Throttle({ default: { limit: 5, ttl: 300000 } })
+  @Post('signup/verify-email/:email')
+  @HttpCode(HttpStatus.OK)
+  verifyEmail(
+    @Param('email') email: string,
+    @Query('lang') lang: 'pt-br' | 'en-us',
+    @Body('code') code: string,
+  ) {
+    return this.authService.verifyEmail(email, lang, code);
   }
 }

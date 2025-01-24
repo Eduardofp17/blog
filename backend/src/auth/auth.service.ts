@@ -3,6 +3,8 @@ import {
   ForbiddenException,
   ConflictException,
   BadRequestException,
+  NotFoundException,
+  Inject,
 } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { User } from '../schemas/user.schema';
@@ -12,6 +14,11 @@ import { JwtService } from '@nestjs/jwt';
 import * as argon2 from 'argon2';
 import { SignTokenReturn, UserCreated } from './auth';
 import { ConfigService } from '@nestjs/config';
+import { Cache } from 'cache-manager';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { MailService } from 'src/mail/mail.service';
+import * as path from 'path';
+import * as ejs from 'ejs';
 
 @Injectable()
 export class AuthService {
@@ -19,6 +26,8 @@ export class AuthService {
     @InjectModel(User.name) private readonly userModel: Model<User>,
     private readonly jwtService: JwtService,
     private readonly config: ConfigService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    private readonly mailService: MailService,
   ) {}
 
   async signup(dto: CreateUserDto): Promise<UserCreated> {
@@ -76,5 +85,61 @@ export class AuthService {
     });
 
     return { access_token: token };
+  }
+
+  async sendVerificationCode(email: string, lang: 'pt-br' | 'en-us') {
+    if (!email) throw new ForbiddenException({ message: 'Missing email' });
+    const user = await this.userModel.findOne({ email });
+    if (!user) throw new NotFoundException({ message: 'User Not Found.' });
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    const expiresIn = 300;
+    await this.cacheManager.set(
+      `verification:${email}`,
+      code,
+      expiresIn * 1000,
+    );
+    const templates = {
+      'pt-br': 'email-verification(pt-br).ejs',
+      'en-us': 'email-verification(en-us).ejs',
+    };
+    const emailTitle = {
+      'pt-br': 'Verifique seu email',
+      'en-us': 'Verify your email',
+    };
+    const template = templates[lang] || templates['en-us'];
+    const name = user.name + ' ' + user.lastname;
+
+    const templatePath = path.join(__dirname, '..', '..', 'views', template);
+    const html = await ejs.renderFile(templatePath, {
+      name,
+      email,
+      verificationCode: code,
+      year: new Date().getFullYear(),
+    });
+    await this.mailService.sendMail(email, emailTitle[lang], html);
+
+    return { message: 'Verification code successfully sent' };
+  }
+
+  async verifyEmail(email: string, lang: 'pt-br' | 'en-us', code: string) {
+    if (!email) throw new ForbiddenException({ message: 'Missing email.' });
+    if (!code)
+      throw new ForbiddenException({ message: 'Missing verification code.' });
+    const user = await this.userModel.findOne({ email });
+    if (!user) throw new NotFoundException({ message: 'User Not Found.' });
+    const storedCode = await this.cacheManager.get(`verification:${email}`);
+    if (!storedCode)
+      throw new NotFoundException(
+        'Verification code expired or was just not founded.',
+      );
+
+    if (code !== storedCode)
+      throw new ForbiddenException({ message: 'User sent invalid code' });
+
+    await this.userModel.findByIdAndUpdate(user._id, {
+      email_verified: true,
+    });
+
+    return { message: 'Email successfully verified' };
   }
 }

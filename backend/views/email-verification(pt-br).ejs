@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Redefinição de Senha</title>
+    <title>Verifique Seu Email</title>
     <style>
       @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
       body {
@@ -59,30 +59,56 @@
         color: #6b7280;
         background: #f9fafb;
       }
+      .verification-code {
+        font-size: 24px;
+        font-weight: 600;
+        text-align: center;
+        margin: 20px 0;
+        color: #1E293B;
+      }
+      .copy-code-button {
+        display: block;
+        width: 100%;
+        max-width: 200px;
+        margin: 20px auto;
+        text-align: center;
+        background: #1E293B;
+        color: #ffffff;
+        padding: 12px;
+        border-radius: 8px;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+      .copy-code-button:hover {
+        background-color: #475569;
+        color: #fff;
+      }
     </style>
   </head>
   <body>
     <div class="container">
       <div class="header">
-        Redefinição de Senha
+        Verifique Seu Email
       </div>
 
       <div class="content">
         <p>Olá, <strong><%= name %></strong></p>
         <p>
-          Recebi uma solicitação para redefinir a senha da sua conta. Caso não
-          tenha feito essa solicitação, ignore este e-mail.
+          Obrigado por se cadastrar! Para completar seu registro, verifique seu endereço de email inserindo o código de verificação abaixo:
         </p>
-        <p><span style="color: red;">*</span><strong>O link é válido por 30 minutos</strong></p>
-        <p>Se você deseja redefinir sua senha, clique no botão abaixo:</p>
 
-        <a href="<%= resetLink %>" class="button" style="color:#fff">Redefinir Senha</a>
+        <div class="verification-code" id="verificationCode">
+          <%= verificationCode %>
+        </div>
 
+        <button class="copy-code-button" onclick="copyVerificationCode()">Copiar Código</button>
+
+        <p><span style="color: red;">*</span><strong>Este código é válido por 5 minutos</strong></p>
         <p>
-          Se o botão acima não funcionar, copie e cole o link abaixo no seu
-          navegador:
+          Se você não solicitou este código de verificação, por favor, ignore este email.
         </p>
-        <p><a href="<%= resetLink %>"><%= resetLink %></a></p>
         <p>Atenciosamente, <br />Eduardofp</p>
       </div>
 
@@ -90,5 +116,18 @@
         © <%= year %> Eduardofp Blog. Todos os direitos reservados.
       </div>
     </div>
+
+    <script>
+      function copyVerificationCode() {
+        const codeElement = document.getElementById('verificationCode');
+        const code = codeElement.innerText;
+
+        navigator.clipboard.writeText(code).then(() => {
+          alert('Código de verificação copiado para a área de transferência!');
+        }).catch(() => {
+          alert('Falha ao copiar o código. Por favor, copie manualmente.');
+        });
+      }
+    </script>
   </body>
 </html>
