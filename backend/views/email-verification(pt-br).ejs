@@ -96,14 +96,12 @@
       <div class="content">
         <p>Olá, <strong><%= name %></strong></p>
         <p>
-          Obrigado por se cadastrar! Para completar seu registro, verifique seu endereço de email inserindo o código de verificação abaixo:
+          Obrigado por se cadastrar! Para completar seu registro, verifique seu endereço de email apenas copiando e inserindo o código de verificação abaixo:
         </p>
 
         <div class="verification-code" id="verificationCode">
           <%= verificationCode %>
         </div>
-
-        <button class="copy-code-button" onclick="copyVerificationCode()">Copiar Código</button>
 
         <p><span style="color: red;">*</span><strong>Este código é válido por 5 minutos</strong></p>
         <p>
@@ -116,18 +114,5 @@
         © <%= year %> Eduardofp Blog. Todos os direitos reservados.
       </div>
     </div>
-
-    <script>
-      function copyVerificationCode() {
-        const codeElement = document.getElementById('verificationCode');
-        const code = codeElement.innerText;
-
-        navigator.clipboard.writeText(code).then(() => {
-          alert('Código de verificação copiado para a área de transferência!');
-        }).catch(() => {
-          alert('Falha ao copiar o código. Por favor, copie manualmente.');
-        });
-      }
-    </script>
   </body>
 </html>
