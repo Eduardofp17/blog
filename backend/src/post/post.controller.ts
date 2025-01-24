@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { PostService } from './post.service';
 import { UseGuards } from '@nestjs/common';
-import { JwtGuard, UsernameGuard } from '../guards';
+import { JwtGuard, AdminGuard } from '../guards';
 import { CreatePostDto, UpdatePostDto, PaginationDto } from './dto';
 import { GetUser } from '../auth/decorator';
 import {
@@ -33,7 +33,7 @@ export class PostController {
   // POST /posts/ - It must create a new post
   @ApiOperation({ summary: 'Create a new post' })
   @ApiBearerAuth()
-  @UseGuards(JwtGuard, UsernameGuard)
+  @UseGuards(JwtGuard, AdminGuard)
   @Post()
   @ApiBody({ type: CreatePostDto, description: 'Post creation data' })
   @ApiResponse({
@@ -223,7 +223,7 @@ export class PostController {
   // PATCH /posts/:id - It must update a post by Unique Identifier
   @ApiOperation({ summary: 'Update a post by its Unique Identifier' })
   @ApiBearerAuth()
-  @UseGuards(JwtGuard, UsernameGuard)
+  @UseGuards(JwtGuard, AdminGuard)
   @Patch(':id')
   @ApiParam({
     name: 'id',
@@ -279,7 +279,7 @@ export class PostController {
   // DELETE /posts/:id - It obviously must delete the post by the Unique Identifier. lmao
   @ApiOperation({ summary: 'Delete a post by its Unique Identifier' })
   @ApiBearerAuth()
-  @UseGuards(JwtGuard, UsernameGuard)
+  @UseGuards(JwtGuard, AdminGuard)
   @Delete(':id')
   @ApiParam({
     name: 'id',
