@@ -4,6 +4,8 @@ import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import * as path from 'path';
+import { ErrorFilter } from './errors/error.filter';
+import { SuccessInterceptor } from './interceptors/success.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -15,6 +17,8 @@ async function bootstrap() {
   });
   app.setGlobalPrefix('api');
   app.setViewEngine('ejs');
+  app.useGlobalFilters(new ErrorFilter());
+  app.useGlobalInterceptors(new SuccessInterceptor());
   app.setBaseViewsDir(path.join(__dirname, '..', 'views'));
   const config = new DocumentBuilder()
     .setTitle('Minha API')
