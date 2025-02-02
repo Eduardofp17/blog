@@ -1,11 +1,4 @@
-import {
-  Injectable,
-  ForbiddenException,
-  ConflictException,
-  BadRequestException,
-  NotFoundException,
-  Inject,
-} from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { User } from '../schemas/user.schema';
 import { CreateUserDto, LoginUserDto } from './dto';
@@ -19,6 +12,13 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { MailService } from 'src/mail/mail.service';
 import * as path from 'path';
 import * as ejs from 'ejs';
+import {
+  BadRequestError,
+  ConflictError,
+  ForbiddenError,
+  NotFoundError,
+} from 'src/errors/http.error';
+import { ErrorCode } from 'src/errors/error-codes.enum';
 
 @Injectable()
 export class AuthService {
@@ -32,14 +32,14 @@ export class AuthService {
 
   async signup(dto: CreateUserDto): Promise<UserCreated> {
     const { email, name, lastname, password, username } = dto;
-    const userEmail = await this.userModel.findOne({ email });
-    if (userEmail) throw new ConflictException('Email is already in use.');
+    const emailInUse = await this.userModel.findOne({ email });
+    if (emailInUse) throw new ConflictError(ErrorCode.EMAIL_IS_ALREADY_IN_USE);
 
-    const userUsername = await this.userModel.findOne({
+    const usernameInUse = await this.userModel.findOne({
       username: { $regex: new RegExp(`^${username}$`, 'i') },
     });
-    if (userUsername)
-      throw new ConflictException('Username is already in use.');
+    if (usernameInUse)
+      throw new ConflictError(ErrorCode.USERNAME_IS_ALREADY_IN_USE);
 
     const newUser = new this.userModel({
       email,
@@ -67,12 +67,18 @@ export class AuthService {
   async signin(dto: LoginUserDto) {
     const { email, password } = dto;
     if (!email) {
-      throw new BadRequestException('Email password are required.');
+      throw new BadRequestError(ErrorCode.MISSING_EMAIL);
     }
+    if (!password) {
+      throw new BadRequestError(ErrorCode.MISSING_PASSWORD);
+    }
+
     const user = await this.userModel.findOne({ email: email });
-    if (!user) throw new ForbiddenException('Incorrect credentials.');
+    if (!user) throw new ForbiddenError(ErrorCode.INCORRECT_CREDENTIALS);
+
     const pwMatches = await argon2.verify(user.password, password);
-    if (!pwMatches) throw new ForbiddenException('Incorrect credentials.');
+    if (!pwMatches) throw new ForbiddenError(ErrorCode.INCORRECT_CREDENTIALS);
+
     delete user.password;
     return this.signToken(user.id, user.email);
   }
@@ -88,9 +94,11 @@ export class AuthService {
   }
 
   async sendVerificationCode(email: string, lang: 'pt-br' | 'en-us') {
-    if (!email) throw new ForbiddenException({ message: 'Missing email' });
+    if (!email) throw new BadRequestError(ErrorCode.MISSING_EMAIL);
+
     const user = await this.userModel.findOne({ email });
-    if (!user) throw new NotFoundException({ message: 'User Not Found.' });
+    if (!user) throw new NotFoundError(ErrorCode.USER_NOT_FOUND);
+
     const code = Math.floor(100000 + Math.random() * 900000).toString();
     const expiresIn = 300;
     await this.cacheManager.set(
@@ -122,19 +130,19 @@ export class AuthService {
   }
 
   async verifyEmail(email: string, lang: 'pt-br' | 'en-us', code: string) {
-    if (!email) throw new ForbiddenException({ message: 'Missing email.' });
-    if (!code)
-      throw new ForbiddenException({ message: 'Missing verification code.' });
+    if (!email) throw new BadRequestError(ErrorCode.MISSING_EMAIL);
+
+    if (!code) throw new BadRequestError(ErrorCode.MISSING_VERIFICATION_CODE);
+
     const user = await this.userModel.findOne({ email });
-    if (!user) throw new NotFoundException({ message: 'User Not Found.' });
+    if (!user) throw new NotFoundError(ErrorCode.USER_NOT_FOUND);
+
     const storedCode = await this.cacheManager.get(`verification:${email}`);
     if (!storedCode)
-      throw new NotFoundException(
-        'Verification code expired or was just not founded.',
-      );
+      throw new NotFoundError(ErrorCode.VERIFICATION_CODE_NOT_FOUND);
 
     if (code !== storedCode)
-      throw new ForbiddenException({ message: 'User sent invalid code' });
+      throw new ForbiddenError(ErrorCode.USER_SENT_INVALID_VERIFICATION_CODE);
 
     await this.userModel.findByIdAndUpdate(user._id, {
       email_verified: true,

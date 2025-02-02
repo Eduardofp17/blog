@@ -15,7 +15,7 @@ async function bootstrap() {
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     allowedHeaders: 'Content-Type,Authorization',
   });
-  app.setGlobalPrefix('api');
+  app.setGlobalPrefix('api/v0');
   app.setViewEngine('ejs');
   app.useGlobalFilters(new ErrorFilter());
   app.useGlobalInterceptors(new SuccessInterceptor());

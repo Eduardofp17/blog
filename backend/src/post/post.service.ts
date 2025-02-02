@@ -1,12 +1,10 @@
-import {
-  ForbiddenException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Post } from '../schemas/post.schema';
 import { CreatePostDto, UpdatePostDto, PaginationDto } from './dto';
+import { ForbiddenError, NotFoundError } from 'src/errors/http.error';
+import { ErrorCode } from 'src/errors/error-codes.enum';
 
 @Injectable()
 export class PostService {
@@ -19,7 +17,6 @@ export class PostService {
   }
 
   async getAllPosts(paginationDto: PaginationDto) {
-    if (!paginationDto) throw new NotFoundException('No posts found.');
     const { page, limit } = paginationDto;
     const skip = (page - 1) * limit;
     const [data, total] = await Promise.all([
@@ -32,7 +29,7 @@ export class PostService {
     );
     const totalPages = Math.ceil(total / limit);
     return {
-      data,
+      posts: data,
       total,
       totalPages,
       currentPage: page,
@@ -41,28 +38,31 @@ export class PostService {
 
   async getPostById(id: string) {
     if (!Types.ObjectId.isValid(id))
-      throw new ForbiddenException('Invalid id.');
+      throw new ForbiddenError(ErrorCode.INVALID_ID);
     const post = await this.postModel.findById(id);
-    if (!post) throw new NotFoundException();
+    if (!post) throw new NotFoundError(ErrorCode.POST_NOT_FOUND);
 
     return post;
   }
 
   async updatePostById(authorId: string, id: string, dto: UpdatePostDto) {
     if (!Types.ObjectId.isValid(id))
-      throw new ForbiddenException('Invalid id.');
+      throw new ForbiddenError(ErrorCode.INVALID_ID);
     const post = await this.postModel.findById(id);
-    if (!post) throw new NotFoundException('Post not found.');
-    if (post.author.toString() !== authorId) throw new ForbiddenException();
+    if (!post) throw new NotFoundError(ErrorCode.POST_NOT_FOUND);
+    if (post.author.toString() !== authorId)
+      throw new ForbiddenError(ErrorCode.UNABLE_TO_EDIT_THIS_POST);
     return post.updateOne({ ...dto });
   }
 
   async deletePostById(authorId: string, id: string) {
     if (!Types.ObjectId.isValid(id))
-      throw new ForbiddenException('Invalid id.');
+      throw new ForbiddenError(ErrorCode.INVALID_ID);
     const post = await this.postModel.findById(id);
-    if (!post) throw new NotFoundException('Post not found.');
-    if (post.author.toString() !== authorId) throw new ForbiddenException();
+    if (!post) throw new NotFoundError(ErrorCode.POST_NOT_FOUND);
+    if (post.author.toString() !== authorId)
+      throw new ForbiddenError(ErrorCode.UNABLE_TO_DELETE_THIS_POST);
+
     return post.deleteOne();
   }
 }

@@ -1,9 +1,6 @@
-import {
-  Injectable,
-  CanActivate,
-  ExecutionContext,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import { ErrorCode } from 'src/errors/error-codes.enum';
+import { UnauthorizedError } from 'src/errors/http.error';
 
 @Injectable()
 export class AdminGuard implements CanActivate {
@@ -11,7 +8,7 @@ export class AdminGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const user = request.user;
     if (!user || user.role !== 'admin') {
-      throw new UnauthorizedException('Only admins can access this route');
+      throw new UnauthorizedError(ErrorCode.ONLY_ADMINS_ALLOWED);
     }
 
     return true;

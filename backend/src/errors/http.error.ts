@@ -12,9 +12,15 @@ export class HttpError extends BaseError {
   }
 }
 
-export class NotFoundError extends HttpError {
+export class BadRequestError extends HttpError {
   constructor(code: ErrorCode) {
-    super(HttpStatus.NOT_FOUND, code);
+    super(HttpStatus.BAD_REQUEST, code);
+  }
+}
+
+export class UnauthorizedError extends HttpError {
+  constructor(code: ErrorCode) {
+    super(HttpStatus.UNAUTHORIZED, code);
   }
 }
 
@@ -24,9 +30,9 @@ export class ForbiddenError extends HttpError {
   }
 }
 
-export class BadRequestError extends HttpError {
+export class NotFoundError extends HttpError {
   constructor(code: ErrorCode) {
-    super(HttpStatus.BAD_REQUEST, code);
+    super(HttpStatus.NOT_FOUND, code);
   }
 }
 

@@ -1,9 +1,4 @@
-import {
-  BadRequestException,
-  ForbiddenException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { User } from '../schemas/user.schema';
@@ -14,6 +9,12 @@ import { JwtService } from '@nestjs/jwt';
 import * as path from 'path';
 import * as ejs from 'ejs';
 import { MailService } from 'src/mail/mail.service';
+import {
+  BadRequestError,
+  ForbiddenError,
+  NotFoundError,
+} from 'src/errors/http.error';
+import { ErrorCode } from 'src/errors/error-codes.enum';
 
 @Injectable()
 export class UserService {
@@ -26,9 +27,10 @@ export class UserService {
 
   async getUsernameAndId(userId: string) {
     if (!Types.ObjectId.isValid(userId))
-      throw new ForbiddenException('Invalid ID');
+      throw new ForbiddenError(ErrorCode.INVALID_ID);
     const user = await this.userModel.findById(userId);
-    if (!user) throw new NotFoundException('User not found.');
+
+    if (!user) throw new NotFoundError(ErrorCode.USER_NOT_FOUND);
     const {
       _id,
       username,
@@ -54,7 +56,7 @@ export class UserService {
 
   async editUser(userId: string, dto: UpdateUserDto) {
     if (!Types.ObjectId.isValid(userId)) {
-      throw new ForbiddenException('Invalid ID.');
+      throw new ForbiddenError(ErrorCode.INVALID_ID);
     }
 
     const user = await this.userModel.findByIdAndUpdate(
@@ -63,7 +65,7 @@ export class UserService {
       { new: true },
     );
     if (!user) {
-      throw new NotFoundException('User not found.');
+      throw new NotFoundError(ErrorCode.USER_NOT_FOUND);
     }
 
     return user;
@@ -71,7 +73,7 @@ export class UserService {
 
   async redefinePassword(userId: string, dto: RedefinePasswordDto) {
     if (!Types.ObjectId.isValid(userId)) {
-      throw new ForbiddenException('Invalid ID.');
+      throw new ForbiddenError(ErrorCode.INVALID_ID);
     }
     const hashedPassword = await argon2.hash(dto.password);
 
@@ -81,7 +83,7 @@ export class UserService {
       { new: true },
     );
     if (!user) {
-      throw new NotFoundException('User not found.');
+      throw new NotFoundError(ErrorCode.USER_NOT_FOUND);
     }
 
     return user;
@@ -89,9 +91,9 @@ export class UserService {
 
   async deleteUser(userId: string) {
     if (!Types.ObjectId.isValid(userId))
-      throw new ForbiddenException('Invalid ID');
+      throw new ForbiddenError(ErrorCode.INVALID_ID);
     const user = await this.userModel.findById(userId);
-    if (!user) throw new NotFoundException('User not found.');
+    if (!user) throw new NotFoundError(ErrorCode.USER_NOT_FOUND);
 
     await this.userModel.deleteOne({ _id: userId });
   }
@@ -101,12 +103,13 @@ export class UserService {
     file: Express.Multer.File,
   ): Promise<User> {
     if (!Types.ObjectId.isValid(userId))
-      throw new ForbiddenException('Invalid ID.');
+      throw new ForbiddenError(ErrorCode.INVALID_ID);
 
-    if (!file || !file.buffer) throw new BadRequestException('Missing file.');
+    if (!file || !file.buffer)
+      throw new BadRequestError(ErrorCode.MISSING_FILE);
 
     const user = await this.userModel.findById(userId);
-    if (!user) throw new NotFoundException('User not found.');
+    if (!user) throw new NotFoundError(ErrorCode.USER_NOT_FOUND);
 
     const base64image = `data:${file.mimetype};base64,${file.buffer.toString('base64')}`;
     user.profilePic = base64image;
@@ -115,16 +118,16 @@ export class UserService {
 
   async deleteProfilePic(userId: string) {
     if (!Types.ObjectId.isValid(userId))
-      throw new ForbiddenException('Invalid ID.');
+      throw new ForbiddenError(ErrorCode.INVALID_ID);
 
     const user = await this.userModel.findById(userId);
-    if (!user) throw new NotFoundException('User not found.');
+    if (!user) throw new NotFoundError(ErrorCode.USER_NOT_FOUND);
     await user.updateOne({ profilePic: '' });
   }
 
   async forgotPassword(email: string, lang: 'pt-br' | 'en-us') {
     const user = await this.userModel.findOne({ email });
-    if (!user) throw new NotFoundException('User not found.');
+    if (!user) throw new NotFoundError(ErrorCode.USER_NOT_FOUND);
     const payload = { sub: user._id };
     const token = await this.jwtService.signAsync(payload, {
       secret: this.config.get<string>('JWT_SECRET'),
