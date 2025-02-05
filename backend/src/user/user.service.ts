@@ -15,11 +15,19 @@ import {
   NotFoundError,
 } from 'src/errors/http.error';
 import { ErrorCode } from 'src/errors/error-codes.enum';
+import { Post } from 'src/schemas/post.schema';
+import { Replies } from 'src/schemas/replies.schema';
+import { Comments } from 'src/schemas/comments.schema';
+import { Images } from 'src/schemas/images.schema';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectModel(User.name) private readonly userModel: Model<User>,
+    @InjectModel(User.name) private readonly postModel: Model<Post>,
+    @InjectModel(User.name) private readonly repliesModel: Model<Replies>,
+    @InjectModel(User.name) private readonly commentsModel: Model<Comments>,
+    @InjectModel(User.name) private readonly imagesModel: Model<Images>,
     private readonly config: ConfigService,
     private readonly jwtService: JwtService,
     private readonly mailService: MailService,
@@ -94,6 +102,39 @@ export class UserService {
       throw new ForbiddenError(ErrorCode.INVALID_ID);
     const user = await this.userModel.findById(userId);
     if (!user) throw new NotFoundError(ErrorCode.USER_NOT_FOUND);
+
+    const comments = await this.commentsModel.find({ author: userId });
+
+    await this.commentsModel.deleteMany({ author: userId });
+    await this.repliesModel.deleteMany({ author: userId });
+    await this.postModel.deleteMany({ author: userId });
+    await this.imagesModel.deleteMany({ authorId: userId });
+
+    const postIds = comments.map((comment) => comment.postId);
+
+    await this.postModel
+      .updateMany({ _id: { $in: postIds } }, { $inc: { comments: -1 } })
+      .exec();
+
+    await this.postModel
+      .updateMany({ likedBy: userId }, { $inc: { likes: -1 } })
+      .exec();
+
+    await this.commentsModel
+      .updateMany({ likedBy: userId }, { $inc: { likes: -1 } })
+      .exec();
+
+    await this.commentsModel
+      .updateMany({ dislikedBy: userId }, { $inc: { dislikes: -1 } })
+      .exec();
+
+    await this.repliesModel
+      .updateMany({ likedBy: userId }, { $inc: { likes: -1 } })
+      .exec();
+
+    await this.repliesModel
+      .updateMany({ dislikedBy: userId }, { $inc: { dislikes: -1 } })
+      .exec();
 
     await this.userModel.deleteOne({ _id: userId });
   }
