@@ -6,11 +6,13 @@ import {
   HttpCode,
   Param,
   Query,
+  UseInterceptors,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto, LoginUserDto } from './dto';
 import { ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 
 @Controller('auth')
 export class AuthController {
@@ -116,6 +118,7 @@ export class AuthController {
     return this.authService.sendVerificationCode(email, lang);
   }
 
+  @UseInterceptors(CacheInterceptor)
   @Throttle({ default: { limit: 5, ttl: 300000 } })
   @Post('signup/verify-email/:email')
   @HttpCode(HttpStatus.OK)
