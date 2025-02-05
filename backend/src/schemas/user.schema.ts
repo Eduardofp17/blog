@@ -7,6 +7,7 @@ import { Document } from 'mongoose';
 export class User extends Document {
   @Prop()
   profilePic: string;
+
   @Prop({ required: true, unique: true })
   username: string;
 
@@ -33,6 +34,7 @@ export class User extends Document {
 
   @Prop({ default: Date.now })
   updatedAt: Date;
+
   async comparePassword(password: string): Promise<boolean> {
     return argon2.verify(this.password, password);
   }

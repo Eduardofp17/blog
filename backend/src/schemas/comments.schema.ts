@@ -12,11 +12,11 @@ export class Comments extends Document {
   @Prop({ type: Types.ObjectId, ref: 'posts', required: true })
   postId: Types.ObjectId;
 
-  @Prop({ type: Types.ObjectId, ref: 'user' })
-  likedBy: Types.ObjectId;
+  @Prop({ type: [{ type: Types.ObjectId, ref: 'users' }], default: [] })
+  likedBy: Types.ObjectId[];
 
-  @Prop({ type: Types.ObjectId, ref: 'user' })
-  dislikedBy: Types.ObjectId;
+  @Prop({ type: [{ type: Types.ObjectId, ref: 'users' }], default: [] })
+  dislikedBy: Types.ObjectId[];
 
   @Prop({ required: true, default: 0 })
   likes: number;

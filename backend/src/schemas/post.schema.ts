@@ -14,14 +14,15 @@ export class Post extends Document {
 
   @Prop({ required: true, default: 0 })
   likes: number;
+
   @Prop({ required: true, default: 0 })
   comments: number;
 
   @Prop({ required: true, default: 0 })
   impressions: number;
 
-  @Prop({ type: Types.ObjectId, ref: 'users' })
-  likedBy: Types.ObjectId;
+  @Prop({ type: [{ type: Types.ObjectId, ref: 'users' }], default: [] })
+  likedBy: Types.ObjectId[];
 
   @Prop({ default: Date.now })
   createdAt: Date;
