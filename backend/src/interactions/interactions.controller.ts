@@ -29,7 +29,7 @@ export class InteractionsController {
 
   @Post('/:postId/likes')
   @UseGuards(JwtGuard)
-  @HttpCode(HttpStatus.CREATED)
+  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Add a like to a specified post' })
   @ApiParam({
@@ -485,7 +485,7 @@ export class InteractionsController {
 
   @Post('/:postId/comments/:commentId/like')
   @UseGuards(JwtGuard)
-  @HttpCode(HttpStatus.CREATED)
+  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Like a comment' })
   @ApiBearerAuth()
   @ApiParam({
@@ -648,7 +648,7 @@ export class InteractionsController {
 
   @Post('/:postId/comments/:commentId/dislike')
   @UseGuards(JwtGuard)
-  @HttpCode(HttpStatus.CREATED)
+  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Dislike a comment' })
   @ApiBearerAuth()
   @ApiParam({
@@ -1230,7 +1230,7 @@ export class InteractionsController {
 
   @Post('/:postId/comments/:commentId/replies/:replyId/like')
   @UseGuards(JwtGuard)
-  @HttpCode(HttpStatus.CREATED)
+  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Like a reply' })
   @ApiBearerAuth()
   @ApiParam({
@@ -1425,7 +1425,7 @@ export class InteractionsController {
 
   @Post('/:postId/comments/:commentId/replies/:replyId/dislike')
   @UseGuards(JwtGuard)
-  @HttpCode(HttpStatus.CREATED)
+  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Dislike a reply' })
   @ApiBearerAuth()
   @ApiParam({
