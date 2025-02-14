@@ -5,13 +5,13 @@
 
 <br>
 You can check the diagram below to see how the system works:
-<img src="/public/images/backend_mongodb_diagram.png" alt="Backend system diagram"><br><br><br>
+<img src="/backend/public/images/backend_mongodb_diagram.png" alt="Backend system diagram"><br><br><br>
 
 ## 📜 Documentation
 
 > For detailed documentation, including Functional Requirements, Non-Functional Requirements, Database Modeling, and API endpoints, you can refer to the following resources:
 
-- [System Requirements and Database Modeling](/public/documents/System%20Requirements%20and%20Database%20Modeling.pdf)
+- [System Requirements and Database Modeling](/backend/public/documents/System%20Requirements%20and%20Database%20Modeling.pdf)
 - [API Documentation (Swagger)](http://localhost:3000/api/docs)
 <br><br>
 
