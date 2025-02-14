@@ -46,6 +46,7 @@ export class UserService {
       name,
       lastname,
       email,
+      email_verified,
       createdAt,
       updatedAt,
     } = user;
@@ -57,6 +58,7 @@ export class UserService {
       name,
       lastname,
       email,
+      email_verified,
       createdAt,
       updatedAt,
     };

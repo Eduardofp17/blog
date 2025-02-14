@@ -1,5 +1,6 @@
 export type SignTokenReturn = {
   access_token: string;
+  user: UserCreated;
 };
 
 export type UserPayloadStrategy = {
@@ -13,6 +14,7 @@ export type UserCreated = {
   email: string;
   name: string;
   lastname: string;
+  email_verified: boolean;
   createdAt: Date;
   updatedAt: Date;
 };

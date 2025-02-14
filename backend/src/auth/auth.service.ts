@@ -57,6 +57,7 @@ export class AuthService {
       email: newUser.email,
       name: newUser.name,
       lastname: newUser.lastname,
+      email_verified: newUser.email_verified,
       createdAt: newUser.createdAt,
       updatedAt: newUser.updatedAt,
     };
@@ -80,17 +81,26 @@ export class AuthService {
     if (!pwMatches) throw new ForbiddenError(ErrorCode.INCORRECT_CREDENTIALS);
 
     delete user.password;
-    return this.signToken(user.id, user.email);
+    return this.signToken({
+      _id: String(user._id),
+      username: user.username,
+      name: user.name,
+      lastname: user.lastname,
+      email: user.email,
+      email_verified: user.email_verified,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    });
   }
 
-  async signToken(sub: string, email: string): Promise<SignTokenReturn> {
-    const payload = { sub, email };
+  async signToken(user: UserCreated): Promise<SignTokenReturn> {
+    const payload = { sub: user._id, email: user.email };
     const token = await this.jwtService.signAsync(payload, {
       secret: this.config.get<string>('JWT_SECRET'),
       expiresIn: this.config.get<string>('JWT_DURATION'),
     });
 
-    return { access_token: token };
+    return { access_token: token, user };
   }
 
   async sendVerificationCode(email: string, lang: 'pt-br' | 'en-us') {

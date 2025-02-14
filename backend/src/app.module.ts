@@ -6,9 +6,9 @@ import { PostModule } from './post/post.module';
 import { InteractionsModule } from './interactions/interactions.module';
 import { UserModule } from './user/user.module';
 import { MailModule } from './mail/mail.module';
-import { CacheInterceptor, CacheModule } from '@nestjs/cache-manager';
+import { CacheModule } from '@nestjs/cache-manager';
 import * as redisStore from 'cache-manager-redis-store';
-import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { ImageModule } from './image/image.module';
 
@@ -27,7 +27,7 @@ import { ImageModule } from './image/image.module';
         {
           name: 'default',
           ttl: 60000,
-          limit: 20,
+          limit: 50,
         },
       ],
     }),
@@ -40,9 +40,6 @@ import { ImageModule } from './image/image.module';
     ImageModule,
   ],
 
-  providers: [
-    { provide: APP_INTERCEPTOR, useClass: CacheInterceptor },
-    { provide: APP_GUARD, useClass: ThrottlerGuard },
-  ],
+  providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
 })
 export class AppModule {}
