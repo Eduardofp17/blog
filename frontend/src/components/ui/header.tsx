@@ -155,18 +155,7 @@ export function Header() {
         </DialogContent>
       </Dialog>
       <div className="flex flex-row items-center justify-between mx-auto max-w-screen-2xl">
-        <Link to="/">
-          <img
-            className="w-30 h-15 lg:w-40 lg:h-20"
-            src={
-              theme === 'light'
-                ? '/images/logo-light-theme.svg'
-                : '/images/logo-dark-theme.svg'
-            }
-            alt="Logo"
-          />
-        </Link>
-        <div className="md:hidden flex flex-row gap-3">
+        <div className="md:hidden flex flex-row">
           {loggedIn ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -212,6 +201,19 @@ export function Header() {
           ) : (
             ''
           )}
+        </div>
+        <Link to="/">
+          <img
+            className="w-30 h-15 lg:w-40 lg:h-20"
+            src={
+              theme === 'light'
+                ? '/images/logo-light-theme.svg'
+                : '/images/logo-dark-theme.svg'
+            }
+            alt="Logo"
+          />
+        </Link>
+        <div className="md:hidden flex flex-row">
           <Drawer
             direction="right"
             open={isDropdownOpen}
