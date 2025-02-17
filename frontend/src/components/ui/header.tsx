@@ -155,8 +155,8 @@ export function Header() {
         </DialogContent>
       </Dialog>
       <div className="flex flex-row items-center justify-between mx-auto max-w-screen-2xl">
-        <div className="md:hidden flex flex-row">
-          {loggedIn ? (
+        {loggedIn ? (
+          <div className="md:hidden flex flex-row">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <div className="flex flex-row items-center cursor-pointer ">
@@ -198,10 +198,10 @@ export function Header() {
                 </div>
               </DropdownMenuContent>
             </DropdownMenu>
-          ) : (
-            ''
-          )}
-        </div>
+          </div>
+        ) : (
+          ''
+        )}
         <Link to="/">
           <img
             className="w-30 h-15 lg:w-40 lg:h-20"
