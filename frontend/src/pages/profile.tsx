@@ -132,7 +132,7 @@ export const Profile: React.FC<{ children: React.ReactNode }> = ({
           Authorization: `Bearer ${token}`,
         },
         data,
-        SuccessCode.PROFILE_SUCCESFULLY_EDITED
+        SuccessCode.PROFILE_SUCCESSFULLY_EDITED
       );
 
       if (selectedFile) {
