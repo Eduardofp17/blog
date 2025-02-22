@@ -43,14 +43,25 @@ export const useApiRequest = () => {
     endpoint: string,
     method: Methods,
     header?: Header,
-    body?: unknown,
+    body?: object | FormData,
     successMessageCode?: string
   ): Promise<ApiSuccessResponse<T> | ApiErrorResponse> {
     try {
+      let requestBody: BodyInit | undefined;
+      let requestHeaders = { ...header };
+
+      if (body instanceof FormData) {
+        requestBody = body;
+        delete requestHeaders['Content-Type'];
+      } else if (body) {
+        requestBody = JSON.stringify(body);
+        requestHeaders['Content-Type'] = 'application/json';
+      }
+
       const response = await fetch(`${apiUrl}${endpoint}`, {
-        headers: header,
         method,
-        body: body ? JSON.stringify(body) : undefined,
+        headers: requestHeaders,
+        body: requestBody,
       });
 
       if (response.status === 204) {

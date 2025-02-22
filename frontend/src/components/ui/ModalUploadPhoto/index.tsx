@@ -1,0 +1,1 @@
+// const ModalUploadPhoto: React.FC = () => {};
