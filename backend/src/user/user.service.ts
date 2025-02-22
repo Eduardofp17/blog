@@ -156,7 +156,10 @@ export class UserService {
 
     const base64image = `data:${file.mimetype};base64,${file.buffer.toString('base64')}`;
     user.profilePic = base64image;
-    return user.save();
+    await user.save();
+    const updatedUser = user.toObject();
+    delete updatedUser.password;
+    return updatedUser;
   }
 
   async deleteProfilePic(userId: string) {

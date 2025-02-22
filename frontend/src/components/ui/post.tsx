@@ -97,7 +97,6 @@ export function PostCard({ post }: Props) {
       );
 
       if (!response.success) return;
-      console.log('handlePost: ', response);
       const { data } = response as ApiSuccessResponse<PostType>;
       setPost(data);
     } catch (err) {
@@ -124,9 +123,7 @@ export function PostCard({ post }: Props) {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       });
-      console.log('like: ', response);
       if (!response.success) return;
-      console.log('deu o like');
       handlePost();
       setLiked(true);
     } catch (err) {
@@ -144,9 +141,7 @@ export function PostCard({ post }: Props) {
           Authorization: `Bearer ${token}`,
         }
       );
-      console.log('dislike: ', response);
       if (!response.success) return;
-      console.log('deu o dislike');
       handlePost();
       setLiked(false);
     } catch (err) {
