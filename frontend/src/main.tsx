@@ -11,11 +11,13 @@ import { Header } from './components/ui/header';
 import { Footer } from './components/ui/footer';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <Router>
       <Analytics />
+      <SpeedInsights />
       <ThemeProvider>
         <Toaster />
         <AuthProvider>
