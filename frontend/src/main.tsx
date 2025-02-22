@@ -10,10 +10,12 @@ import { ThemeProvider } from './components/ui/theme-provider';
 import { Header } from './components/ui/header';
 import { Footer } from './components/ui/footer';
 import { BrowserRouter as Router } from 'react-router-dom';
+import { Analytics } from '@vercel/analytics/react';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <Router>
+      <Analytics />
       <ThemeProvider>
         <Toaster />
         <AuthProvider>
