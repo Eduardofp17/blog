@@ -117,5 +117,15 @@
   "markdown online previewer": "Markdown online previewer",
   "close": "Close",
   "portuguese": "Portuguese",
-  "english": "English"
+  "english": "English",
+  "COMMENT_SUCCESSFULLY_DELETED": "Comment successfully deleted.",
+  "REPLY_SUCCESSFULLY_CREATED": "Reply successfully created.",
+  "COMMENT_SUCCESSFULLY_CREATED": "Comment successfully created.",
+  "COMMENT_SUCCESSFULLY_EDITED": "Comment successfully edited.",
+  "PASSWORD_SUCCESSFULLY_REDEFINED": "Password successfully redefined.",
+  "REPLY_SUCCESSFULLY_DELETED": "Reply successfully deleted.",
+  "VERIFICATION_CODE_SUCCESSFULLY_SENT": "Verification code successfully sent.",
+  "EMAIL_SUCCESSFULLY_VERIFIED": "Email successfully verified.",
+  "RECOVERY_PASSWORD_LINK_SENT": "Recovery password link sent.",
+  "PROFILE_SUCCESSFULLY_EDITED": "Profile successfully edited."
 }
