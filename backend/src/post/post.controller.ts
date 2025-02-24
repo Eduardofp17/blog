@@ -159,8 +159,8 @@ export class PostController {
       statusCode: 404,
     },
   })
-  getAllPosts(@Query() paginationDto: PaginationDto) {
-    return this.postService.getAllPosts(paginationDto);
+  async getAllPosts(@Query() paginationDto: PaginationDto) {
+    return await this.postService.getAllPosts(paginationDto);
   }
 
   // GET /posts/:id - It must show a single post by the Unique Identifier

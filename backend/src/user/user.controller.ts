@@ -77,8 +77,8 @@ export class UserController {
       statusCode: 404,
     },
   })
-  getUsernameAndId(@Param('userId') userId: string) {
-    return this.usersService.getUsernameAndId(userId);
+  async getUsernameAndId(@Param('userId') userId: string) {
+    return await this.usersService.getUsernameAndId(userId);
   }
 
   @UseGuards(JwtGuard)
