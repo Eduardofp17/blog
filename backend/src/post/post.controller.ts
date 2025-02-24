@@ -78,8 +78,11 @@ export class PostController {
       'Unauthorized - Could happens cause only the blog owner is allowed to create a post.',
     example: {},
   })
-  createNewPost(@GetUser('id') authorId: string, @Body() dto: CreatePostDto) {
-    return this.postService.createNewPost(authorId, dto);
+  async createNewPost(
+    @GetUser('id') authorId: string,
+    @Body() dto: CreatePostDto,
+  ) {
+    return await this.postService.createNewPost(authorId, dto);
   }
 
   // GET /posts/feed - It must show to the paginated posts
@@ -216,8 +219,8 @@ export class PostController {
       statusCode: 404,
     },
   })
-  getPostById(@Param('id') id: string) {
-    return this.postService.getPostById(id);
+  async getPostById(@Param('id') id: string) {
+    return await this.postService.getPostById(id);
   }
 
   // PATCH /posts/:id - It must update a post by Unique Identifier
@@ -268,12 +271,12 @@ export class PostController {
       statusCode: 404,
     },
   })
-  updatePostById(
+  async updatePostById(
     @GetUser('id') authorId: string,
     @Param('id') id: string,
     @Body() dto: UpdatePostDto,
   ) {
-    return this.postService.updatePostById(authorId, id, dto);
+    return await this.postService.updatePostById(authorId, id, dto);
   }
 
   // DELETE /posts/:id - It obviously must delete the post by the Unique Identifier. lmao
@@ -310,7 +313,10 @@ export class PostController {
       statusCode: 404,
     },
   })
-  deletePostById(@GetUser('id') authorId: string, @Param('id') id: string) {
-    return this.postService.deletePostById(authorId, id);
+  async deletePostById(
+    @GetUser('id') authorId: string,
+    @Param('id') id: string,
+  ) {
+    return await this.postService.deletePostById(authorId, id);
   }
 }

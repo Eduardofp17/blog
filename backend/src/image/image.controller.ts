@@ -22,8 +22,8 @@ export class ImageController {
   constructor(private readonly imageService: ImageService) {}
 
   @Get('/:postId')
-  getPostImages(@Param('postId') postId: string) {
-    return this.imageService.getPostImages(postId);
+  async getPostImages(@Param('postId') postId: string) {
+    return await this.imageService.getPostImages(postId);
   }
 
   @HttpCode(HttpStatus.CREATED)
@@ -43,22 +43,22 @@ export class ImageController {
       limits: { fileSize: 5 * 1024 * 1024 },
     }),
   )
-  uploadImage(
+  async uploadImage(
     @GetUser('id') userId: string,
     @Param('postId') postId: string,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    return this.imageService.uploadImage(userId, postId, file);
+    return await this.imageService.uploadImage(userId, postId, file);
   }
 
   @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(JwtGuard, AdminGuard)
   @Delete('/:postId/:imageId')
-  deleteImage(
+  async deleteImage(
     @GetUser('id') userId: string,
     @Param('postId') postId: string,
     @Param('imageId') imageId: string,
   ) {
-    return this.imageService.deleteImage(userId, postId, imageId);
+    return await this.imageService.deleteImage(userId, postId, imageId);
   }
 }

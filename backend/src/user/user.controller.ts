@@ -111,8 +111,8 @@ export class UserController {
       },
     },
   })
-  editUser(@GetUser('id') userId: string, @Body() dto: UpdateUserDto) {
-    return this.usersService.editUser(userId, dto);
+  async editUser(@GetUser('id') userId: string, @Body() dto: UpdateUserDto) {
+    return await this.usersService.editUser(userId, dto);
   }
 
   @UseGuards(JwtGuard)
@@ -144,8 +144,8 @@ export class UserController {
       },
     },
   })
-  deleteUser(@GetUser('id') userId: string) {
-    this.usersService.deleteUser(userId);
+  async deleteUser(@GetUser('id') userId: string) {
+    return this.usersService.deleteUser(userId);
   }
 
   @UseGuards(JwtGuard)
@@ -161,18 +161,18 @@ export class UserController {
       limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
     }),
   )
-  uploadProfilePic(
+  async uploadProfilePic(
     @GetUser('id') userId: string,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    return this.usersService.uploadProfilePic(userId, file);
+    return await this.usersService.uploadProfilePic(userId, file);
   }
 
   @UseGuards(JwtGuard)
   @Delete('/me/profile-pic')
   @HttpCode(HttpStatus.NO_CONTENT)
-  deleteProfilePic(@GetUser('id') userId: string) {
-    return this.usersService.deleteProfilePic(userId);
+  async deleteProfilePic(@GetUser('id') userId: string) {
+    return await this.usersService.deleteProfilePic(userId);
   }
 
   @Post('forgot-password')
@@ -180,7 +180,7 @@ export class UserController {
     @Body('email') email: string,
     @Query('lang') lang: 'pt-br' | 'en-us',
   ) {
-    return this.usersService.forgotPassword(email, lang);
+    return await this.usersService.forgotPassword(email, lang);
   }
 
   @Patch('me/redefine-password/:id')
@@ -210,10 +210,10 @@ export class UserController {
       },
     },
   })
-  redefinePassword(
+  async redefinePassword(
     @Param('id') userId: string,
     @Body() dto: RedefinePasswordDto,
   ) {
-    this.usersService.redefinePassword(userId, dto);
+    return await this.usersService.redefinePassword(userId, dto);
   }
 }
