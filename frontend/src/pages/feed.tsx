@@ -19,6 +19,8 @@ import type { ApiSuccessResponse, Post } from '@/types';
 import { PostResponse } from '@/types';
 
 export const Feed: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  document.title = 'Eduardofp Blog - Feed';
+
   const { t } = useTranslation();
   const { toast } = useToast();
   const [currentPage, setCurrentPage] = useState(1);

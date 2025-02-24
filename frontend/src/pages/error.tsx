@@ -15,6 +15,8 @@ export const Error: React.FC<Props> = ({
   handleAction,
   buttonTitle = 'Go to the homepage',
 }) => {
+  document.title = 'Eduardofp Blog - Error';
+
   const { t } = useTranslation();
   const navigate = useNavigate();
   const handleNavigateToHome = () => {

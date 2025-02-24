@@ -18,6 +18,8 @@ import { SuccessCode } from '@/response-codes';
 export const ForgotPassword: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
+  document.title = 'Eduardofp Blog - Forgot Password';
+
   const { t, i18n } = useTranslation();
   const {
     register,

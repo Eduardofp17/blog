@@ -6,6 +6,8 @@ import { useGlobalContext } from '@/contexts/GlobalContext';
 import { useTranslation } from 'react-i18next';
 
 export function ReadPost() {
+  document.title = 'Eduardofp Blog - Read Post';
+
   const location = useLocation();
   const post = location.state?.post;
   const { loading } = useGlobalContext();

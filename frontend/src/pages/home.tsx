@@ -5,6 +5,8 @@ import { Rss } from 'lucide-react';
 import { useGlobalContext } from '@/contexts/GlobalContext';
 
 export function HomePage() {
+  document.title = 'Eduardofp Blog - Home';
+
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { loading } = useGlobalContext();
