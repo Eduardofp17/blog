@@ -60,8 +60,8 @@ export class AuthController {
       },
     },
   })
-  signup(@Body() dto: CreateUserDto) {
-    return this.authService.signup(dto);
+  async signup(@Body() dto: CreateUserDto) {
+    return await this.authService.signup(dto);
   }
 
   @Post('signin')
@@ -105,8 +105,8 @@ export class AuthController {
       },
     },
   })
-  signin(@Body() dto: LoginUserDto) {
-    return this.authService.signin(dto);
+  async signin(@Body() dto: LoginUserDto) {
+    return await this.authService.signin(dto);
   }
 
   @Post('signup/send-verification-code/:email')
@@ -122,11 +122,11 @@ export class AuthController {
   @Throttle({ default: { limit: 5, ttl: 300000 } })
   @Post('signup/verify-email/:email')
   @HttpCode(HttpStatus.OK)
-  verifyEmail(
+  async verifyEmail(
     @Param('email') email: string,
     @Query('lang') lang: 'pt-br' | 'en-us',
     @Body('code') code: string,
   ) {
-    return this.authService.verifyEmail(email, lang, code);
+    return await this.authService.verifyEmail(email, lang, code);
   }
 }

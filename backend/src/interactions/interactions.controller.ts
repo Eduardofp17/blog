@@ -45,8 +45,11 @@ export class InteractionsController {
     status: 400,
     description: 'The request failed due to an invalid post ID.',
   })
-  addLike(@Param('postId') postId: string, @GetUser('id') userId: string) {
-    return this.interactionsService.addLike(userId, postId);
+  async addLike(
+    @Param('postId') postId: string,
+    @GetUser('id') userId: string,
+  ) {
+    return await this.interactionsService.addLike(userId, postId);
   }
 
   // Unlike
@@ -67,8 +70,11 @@ export class InteractionsController {
     status: 400,
     description: 'The request failed due to an invalid post ID.',
   })
-  removeLike(@Param('postId') postId: string, @GetUser('id') userId: string) {
-    return this.interactionsService.removeLike(userId, postId);
+  async removeLike(
+    @Param('postId') postId: string,
+    @GetUser('id') userId: string,
+  ) {
+    return await this.interactionsService.removeLike(userId, postId);
   }
 
   // Comments
@@ -151,8 +157,8 @@ export class InteractionsController {
       statusCode: 404,
     },
   })
-  getComments(@Param('postId') postId: string) {
-    return this.interactionsService.getComments(postId);
+  async getComments(@Param('postId') postId: string) {
+    return await this.interactionsService.getComments(postId);
   }
 
   @Get('/:postId/comments/:commentId')
@@ -243,11 +249,11 @@ export class InteractionsController {
       },
     },
   })
-  getCommentById(
+  async getCommentById(
     @Param('commentId') commentId: string,
     @Param('postId') postId: string,
   ) {
-    return this.interactionsService.getCommentById(postId, commentId);
+    return await this.interactionsService.getCommentById(postId, commentId);
   }
 
   @Post('/:postId/comments')
@@ -322,12 +328,12 @@ export class InteractionsController {
       statusCode: 404,
     },
   })
-  addComment(
+  async addComment(
     @GetUser('id') userId: string,
     @Param('postId') postId: string,
     @Body() dto: CreateCommentDto,
   ) {
-    return this.interactionsService.addComment(userId, postId, dto);
+    return await this.interactionsService.addComment(userId, postId, dto);
   }
 
   @Patch('/:postId/comments/:commentId')
@@ -401,13 +407,18 @@ export class InteractionsController {
       },
     },
   })
-  editComment(
+  async editComment(
     @GetUser('id') userId: string,
     @Param('commentId') commentId: string,
     @Param('postId') postId: string,
     @Body() dto: CreateCommentDto,
   ) {
-    return this.interactionsService.editComment(userId, postId, commentId, dto);
+    return await this.interactionsService.editComment(
+      userId,
+      postId,
+      commentId,
+      dto,
+    );
   }
 
   @Delete('/:postId/comments/:commentId')
@@ -475,12 +486,16 @@ export class InteractionsController {
       },
     },
   })
-  deleteComment(
+  async deleteComment(
     @GetUser('id') userId: string,
     @Param('commentId') commentId: string,
     @Param('postId') postId: string,
   ) {
-    return this.interactionsService.deleteComment(userId, postId, commentId);
+    return await this.interactionsService.deleteComment(
+      userId,
+      postId,
+      commentId,
+    );
   }
 
   @Post('/:postId/comments/:commentId/like')
@@ -552,12 +567,16 @@ export class InteractionsController {
       },
     },
   })
-  likeAComment(
+  async likeAComment(
     @GetUser('id') userId: string,
     @Param('commentId') commentId: string,
     @Param('postId') postId: string,
   ) {
-    return this.interactionsService.likeAComment(userId, postId, commentId);
+    return await this.interactionsService.likeAComment(
+      userId,
+      postId,
+      commentId,
+    );
   }
 
   @Delete('/:postId/comments/:commentId/like')
@@ -634,12 +653,12 @@ export class InteractionsController {
       },
     },
   })
-  removeLikeInAComment(
+  async removeLikeInAComment(
     @GetUser('id') userId: string,
     @Param('commentId') commentId: string,
     @Param('postId') postId: string,
   ) {
-    return this.interactionsService.removeLikeInAComment(
+    return await this.interactionsService.removeLikeInAComment(
       userId,
       postId,
       commentId,
@@ -715,12 +734,16 @@ export class InteractionsController {
       },
     },
   })
-  dislikeAComment(
+  async dislikeAComment(
     @GetUser('id') userId: string,
     @Param('commentId') commentId: string,
     @Param('postId') postId: string,
   ) {
-    return this.interactionsService.dislikeAComment(userId, postId, commentId);
+    return await this.interactionsService.dislikeAComment(
+      userId,
+      postId,
+      commentId,
+    );
   }
 
   @Delete('/:postId/comments/:commentId/dislike')
@@ -797,12 +820,12 @@ export class InteractionsController {
       },
     },
   })
-  removeDislikeInAComment(
+  async removeDislikeInAComment(
     @GetUser('id') userId: string,
     @Param('commentId') commentId: string,
     @Param('postId') postId: string,
   ) {
-    return this.interactionsService.removeDislikeInAComment(
+    return await this.interactionsService.removeDislikeInAComment(
       userId,
       postId,
       commentId,
@@ -914,11 +937,11 @@ export class InteractionsController {
       },
     },
   })
-  getReplies(
+  async getReplies(
     @Param('commentId') commentId: string,
     @Param('postId') postId: string,
   ) {
-    return this.interactionsService.getReplies(postId, commentId);
+    return await this.interactionsService.getReplies(postId, commentId);
   }
 
   @Get('/:postId/comments/:commentId/replies/:replyId')
@@ -1025,12 +1048,16 @@ export class InteractionsController {
       },
     },
   })
-  getReplyById(
+  async getReplyById(
     @Param('commentId') commentId: string,
     @Param('postId') postId: string,
     @Param('replyId') replyId: string,
   ) {
-    return this.interactionsService.getReplyById(postId, commentId, replyId);
+    return await this.interactionsService.getReplyById(
+      postId,
+      commentId,
+      replyId,
+    );
   }
 
   @Post('/:postId/comments/:commentId/replies')
@@ -1125,14 +1152,14 @@ export class InteractionsController {
       },
     },
   })
-  replyComment(
+  async replyComment(
     @GetUser('id') userId: string,
     @Param('commentId') commentId: string,
     @Param('postId') postId: string,
     @Query('mention') mentionId: string,
     @Body() dto: CreateCommentDto,
   ) {
-    return this.interactionsService.replyComment(
+    return await this.interactionsService.replyComment(
       userId,
       postId,
       commentId,
@@ -1214,13 +1241,13 @@ export class InteractionsController {
       },
     },
   })
-  deleteReply(
+  async deleteReply(
     @GetUser('id') userId: string,
     @Param('commentId') commentId: string,
     @Param('postId') postId: string,
     @Param('replyId') replyId: string,
   ) {
-    return this.interactionsService.deleteReply(
+    return await this.interactionsService.deleteReply(
       userId,
       postId,
       commentId,
@@ -1309,13 +1336,13 @@ export class InteractionsController {
       },
     },
   })
-  likeAReply(
+  async likeAReply(
     @GetUser('id') userId: string,
     @Param('commentId') commentId: string,
     @Param('postId') postId: string,
     @Param('replyId') replyId: string,
   ) {
-    return this.interactionsService.likeAReply(
+    return await this.interactionsService.likeAReply(
       userId,
       postId,
       commentId,
@@ -1409,13 +1436,13 @@ export class InteractionsController {
       },
     },
   })
-  removeLikeInAReply(
+  async removeLikeInAReply(
     @GetUser('id') userId: string,
     @Param('commentId') commentId: string,
     @Param('postId') postId: string,
     @Param('replyId') replyId: string,
   ) {
-    return this.interactionsService.removeLikeInAReply(
+    return await this.interactionsService.removeLikeInAReply(
       userId,
       postId,
       commentId,
@@ -1504,13 +1531,13 @@ export class InteractionsController {
       },
     },
   })
-  dislikeAReply(
+  async dislikeAReply(
     @GetUser('id') userId: string,
     @Param('commentId') commentId: string,
     @Param('postId') postId: string,
     @Param('replyId') replyId: string,
   ) {
-    return this.interactionsService.dislikeAReply(
+    return await this.interactionsService.dislikeAReply(
       userId,
       postId,
       commentId,
@@ -1604,13 +1631,13 @@ export class InteractionsController {
       },
     },
   })
-  removeDislikeInAReply(
+  async removeDislikeInAReply(
     @GetUser('id') userId: string,
     @Param('commentId') commentId: string,
     @Param('postId') postId: string,
     @Param('replyId') replyId: string,
   ) {
-    return this.interactionsService.removeDislikeInAReply(
+    return await this.interactionsService.removeDislikeInAReply(
       userId,
       postId,
       commentId,
