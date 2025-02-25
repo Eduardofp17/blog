@@ -4,14 +4,18 @@ import { useTranslation } from 'react-i18next';
 import { Rss } from 'lucide-react';
 import { useGlobalContext } from '@/contexts/GlobalContext';
 
-export function HomePage() {
+export const HomePage: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   document.title = 'Eduardofp Blog - Home';
 
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { loading } = useGlobalContext();
 
-  return (
+  return loading ? (
+    children
+  ) : (
     <>
       {loading ? (
         <main className="flex-grow flex items-center justify-center min-h-screen">
@@ -80,4 +84,4 @@ export function HomePage() {
       )}
     </>
   );
-}
+};

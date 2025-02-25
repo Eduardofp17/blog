@@ -19,7 +19,9 @@ export function AppRoutes() {
         path="/"
         element={
           <WithEmailVerification>
-            <HomePage />
+            <HomePage>
+              <Loading />
+            </HomePage>
           </WithEmailVerification>
         }
       />
@@ -38,7 +40,9 @@ export function AppRoutes() {
         path="/signin"
         element={
           <WithEmailVerification>
-            <SignIn />{' '}
+            <SignIn>
+              <Loading />
+            </SignIn>
           </WithEmailVerification>
         }
       />
@@ -46,7 +50,9 @@ export function AppRoutes() {
         path="/signup"
         element={
           <WithEmailVerification>
-            <Signup />
+            <Signup>
+              <Loading />
+            </Signup>
           </WithEmailVerification>
         }
       />
