@@ -33,6 +33,8 @@ type FormData = {
 export const Profile: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
+  document.title = 'Eduardofp Blog - Profile';
+
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { token, logout } = useAuthContext();

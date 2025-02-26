@@ -2,9 +2,11 @@ import { MultiStepForm } from './signup-multistep-form/multistep-form';
 import { useGlobalContext } from '@/contexts/GlobalContext';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 
-export function Signup() {
+export const Signup: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   document.title = 'Eduardofp Blog - Signup';
   const { loading } = useGlobalContext();
   const { loggedIn } = useAuthContext();
@@ -16,7 +18,9 @@ export function Signup() {
     if (loggedIn) handleNavigateHome();
   }, []);
 
-  return (
+  return loading ? (
+    children
+  ) : (
     <>
       <div className="flex flex-col  animate-scroll">
         {loading ? (
@@ -36,4 +40,4 @@ export function Signup() {
       </div>
     </>
   );
-}
+};

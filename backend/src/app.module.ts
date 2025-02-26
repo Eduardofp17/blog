@@ -11,6 +11,7 @@ import * as redisStore from 'cache-manager-redis-store';
 import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { ImageModule } from './image/image.module';
+import { CacheInterceptor } from './interceptors/cache.interceptor';
 
 @Module({
   imports: [
@@ -40,6 +41,12 @@ import { ImageModule } from './image/image.module';
     ImageModule,
   ],
 
-  providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
+  providers: [
+    { provide: APP_GUARD, useClass: ThrottlerGuard },
+    {
+      provide: 'APP_INTERCEPTOR',
+      useClass: CacheInterceptor,
+    },
+  ],
 })
 export class AppModule {}

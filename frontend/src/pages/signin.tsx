@@ -24,7 +24,9 @@ type FormData = {
   password: string;
 };
 
-export function SignIn() {
+export const SignIn: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   document.title = 'Eduardofp Blog - Signin';
   const { t } = useTranslation();
   const {
@@ -32,7 +34,7 @@ export function SignIn() {
     handleSubmit,
     formState: { errors },
   } = useForm<FormData>();
-  const { setLoading } = useGlobalContext();
+  const { loading, setLoading } = useGlobalContext();
   const { loggin, loggedIn, handleSaveUserInCookie } = useAuthContext();
   const { request } = useApiRequest();
 
@@ -79,7 +81,9 @@ export function SignIn() {
     }
   };
 
-  return (
+  return loading ? (
+    children
+  ) : (
     <>
       <main className="flex-grow">
         <section
@@ -148,4 +152,4 @@ export function SignIn() {
       </main>
     </>
   );
-}
+};

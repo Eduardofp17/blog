@@ -20,6 +20,7 @@ import { SuccessCode } from '@/response-codes';
 export const RecoveryPassword: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
+  document.title = 'Eduardofp Blog - Recovery Password';
   const { t } = useTranslation();
   const {
     register,
