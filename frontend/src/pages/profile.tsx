@@ -295,7 +295,7 @@ export const Profile: React.FC<{ children: React.ReactNode }> = ({
                   <img
                     src={URL.createObjectURL(selectedFile)}
                     alt=""
-                    className="rounded-md"
+                    className="rounded-md w-28 h-28"
                   />
                 </div>
               ) : (
