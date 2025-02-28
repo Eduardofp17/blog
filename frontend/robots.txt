@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /me/profile
+Disallow: /forgot-password
+Disallow: /recovery-password
+
+Sitemap: https://www.eduardofp.blog/sitemap.xml
