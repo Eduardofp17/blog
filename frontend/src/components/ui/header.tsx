@@ -82,11 +82,11 @@ export function Header() {
       },
       { threshold: 0.6 }
     );
-
     sections.forEach((section) => observer.observe(section));
 
     return () => observer.disconnect();
   }, [location.pathname]);
+
   const handleSignin = () => {
     navigate('/signin');
     setIsDropdownOpen(false);
@@ -204,11 +204,13 @@ export function Header() {
         )}
         <Link to="/">
           <img
-            className="w-30 h-15 lg:w-40 lg:h-20"
+            className="w-24 h-15 lg:w-40 lg:h-18"
+            width={100}
+            height={40}
             src={
               theme === 'light'
-                ? '/images/logo-light-theme.svg'
-                : '/images/logo-dark-theme.svg'
+                ? '/images/logo-light-theme.webp'
+                : '/images/logo-dark-theme.webp'
             }
             alt="Logo"
           />
@@ -220,7 +222,7 @@ export function Header() {
             onOpenChange={setIsDropdownOpen}
           >
             <DrawerTrigger asChild>
-              <Menu className="w-6 h-6" />
+              <Menu className="w-6 h-6" role="img" aria-label="Open menu" />
             </DrawerTrigger>
 
             <DrawerContent className="gap-6">
