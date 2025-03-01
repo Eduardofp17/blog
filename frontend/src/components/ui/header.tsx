@@ -252,7 +252,7 @@ export function Header() {
                 >
                   {t('about')}
                 </a>
-                <a
+                {/* <a
                   href=""
                   className={`text-base hover:text-lg border-b-2 border-transparent
                 hover:border-blue-500 transition-all duration-300 
@@ -260,7 +260,7 @@ export function Header() {
                   onClick={() => setIsDropdownOpen(false)}
                 >
                   {t('portfolio')}
-                </a>
+                </a> */}
                 <a
                   href="/feed"
                   className={`text-base hover:text-lg border-b-2 border-transparent
@@ -307,14 +307,14 @@ export function Header() {
             >
               {t('about')}
             </a>
-            <a
+            {/* <a
               href=""
               className={`text-sm  hover:text-base xl:text-lg xl:hover:text-xl border-b-2 border-transparent
                 hover:border-blue-500 transition-all duration-300 
                 ${activeSection === 'portfolio' ? 'text-blue-500 border-blue-500' : 'border-transparent'}`}
             >
               {t('portfolio')}
-            </a>
+            </a> */}
             <a
               href="/feed"
               className={`text-sm hover:text-base xl:text-lg xl:hover:text-xl border-b-2 border-transparent
